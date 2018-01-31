@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"math"
 	"net/http"
 	"time"
 
@@ -42,6 +43,10 @@ func handleDataRequest(c echo.Context) error {
 	diff := oldAvg - newAvg
 	avg := (oldAvg + newAvg) / 2
 	percentage := (diff / avg) * 100
+
+	if math.IsNaN(percentage) {
+		return c.JSON(http.StatusOK, map[string]string{"error": "NaN"})
+	}
 
 	return c.JSON(http.StatusOK, map[string]float64{"result": percentage})
 
