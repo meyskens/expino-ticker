@@ -12,9 +12,9 @@ var influxDBURL = os.Getenv("INFLUXURL")
 
 const influxDBDB = "kiosk"
 
-func getOldDataPoints(setup, metric string, interval time.Duration) ([]client.Result, error) {
+func getOldDataPoints(setup, metric string, interval, back time.Duration) ([]client.Result, error) {
 	t := time.Now().Add(-1 * interval)
-	end := t.Add(-1 * time.Minute)
+	end := t.Add(-1 * back)
 
 	c, err := client.NewHTTPClient(client.HTTPConfig{
 		Addr: influxDBURL,
@@ -25,9 +25,9 @@ func getOldDataPoints(setup, metric string, interval time.Duration) ([]client.Re
 	return queryDB(c, fmt.Sprintf("SELECT %s FROM %s WHERE time <= %dms AND time >= %dms", metric, setup, t.Unix()*1000, end.Unix()*1000))
 }
 
-func getLatestDataPoints(setup, metric string) ([]client.Result, error) {
+func getLatestDataPoints(setup, metric string, back time.Duration) ([]client.Result, error) {
 	t := time.Now()
-	end := t.Add(-1 * time.Minute)
+	end := t.Add(-1 * back)
 
 	c, err := client.NewHTTPClient(client.HTTPConfig{
 		Addr: influxDBURL,

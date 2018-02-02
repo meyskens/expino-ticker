@@ -15,7 +15,7 @@ func main() {
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Is the bitcoin up yet?")
 	})
-	e.GET("/diff/:setup/:metric/:interval", handleDataRequest)
+	e.GET("/diff/:setup/:metric/:interval/:back", handleDataRequest)
 	e.Logger.Fatal(e.Start(":8080"))
 }
 
@@ -27,12 +27,17 @@ func handleDataRequest(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{"status": "error", "error": err.Error()})
 	}
 
-	old, err := getOldDataPoints(setup, metric, interval)
+	back, err := time.ParseDuration(c.Param("interval"))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"status": "error", "error": err.Error()})
 	}
 
-	new, err := getLatestDataPoints(setup, metric)
+	old, err := getOldDataPoints(setup, metric, interval, back)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"status": "error", "error": err.Error()})
+	}
+
+	new, err := getLatestDataPoints(setup, metric, back)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{"status": "error", "error": err.Error()})
 	}
