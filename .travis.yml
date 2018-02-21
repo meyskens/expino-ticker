@@ -24,7 +24,7 @@ before_script:
     - sudo apt-get -y install qemu-user-static
     - docker run --rm --privileged multiarch/qemu-user-static:register
 script:
-    - GOARCH=$GO_ARCH GOARM=$GO_ARM go build ./
+    - GOARCH=$GO_ARCH GOARM=$GO_ARM CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo ./
     - sudo ./build.sh --arch="$ARCH" --version="$VERSION" --qemuarch="$QEMU_ARCH" --qemuversion="$QEMU_VER" --repo="$DOCKER_REPO"
 after_success:
     - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
