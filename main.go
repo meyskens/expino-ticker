@@ -53,7 +53,7 @@ func handleDataRequest(c echo.Context) error {
 		return c.JSON(http.StatusOK, map[string]string{"error": "NaN"})
 	}
 
-	return c.JSON(http.StatusOK, map[string]float64{"result": percentage})
+	return c.JSON(http.StatusOK, map[string]interface{}{"result": percentage, "setup": setup})
 
 }
 
