@@ -8,10 +8,12 @@ import (
 
 	client "github.com/influxdata/influxdb/client/v2"
 	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 )
 
 func main() {
 	e := echo.New()
+	e.Use(middleware.CORS())
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Is the bitcoin up yet?")
 	})
